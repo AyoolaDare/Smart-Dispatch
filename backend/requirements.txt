@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+elasticsearch[async]
+python-dotenv
+apscheduler
+pydantic
+httpx
+pydantic-settings
