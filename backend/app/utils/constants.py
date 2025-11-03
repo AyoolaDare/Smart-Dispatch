@@ -12,7 +12,7 @@ ALERT_RULES = {
 
 # Elasticsearch index template for ATM telemetry data
 TELEMETRY_INDEX_TEMPLATE = {
-    "index_patterns": [f"{TELEMETry_INDEX_PREFIX}-*"],
+    "index_patterns": [f"{TELEMETRY_INDEX_PREFIX}-*"],
     "template": {
         "settings": {
             "number_of_shards": 1,
