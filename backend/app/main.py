@@ -1,7 +1,9 @@
 import logging
+import asyncio
 from fastapi import FastAPI
 
-from app.api.v1.endpoints import logs, alerts
+from app.api.v1.endpoints import logs
+from app.api.v1.endpoints import alerts_clean as alerts
 from app.config import settings
 from app.jobs.scheduler import start_scheduler, stop_scheduler
 from app.services.elasticsearch.es_client import es_client
@@ -26,12 +28,22 @@ async def startup_event():
     3. Start the background job scheduler.
     """
     logger.info("Starting application...")
-    if await es_client.ping():
-        await ensure_index_template_exists()
+    # Bound the ping call so startup doesn't hang for a long time if ES is down.
+    try:
+        connected = await asyncio.wait_for(es_client.ping(), timeout=5)
+    except asyncio.TimeoutError:
+        logger.error("Timeout while trying to ping Elasticsearch.")
+        connected = False
+
+    if connected:
+        try:
+            await ensure_index_template_exists()
+        except Exception as e:
+            logger.error(f"Failed to ensure index template exists: {e}")
         start_scheduler()
     else:
         logger.critical("Failed to connect to Elasticsearch. Application will not start correctly.")
-        # In a real app, you might want to exit here if ES is required.
+        # Application will continue running, but features requiring ES will fail.
 
 @app.on_event("shutdown")
 async def shutdown_event():

@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-from app.services.elasticsearch.es_client import es
+from app.services.elasticsearch.es_client import es_client
 from app.services.elasticsearch.alert_service import create_alert
 from app.utils.constants import ALERT_RULES, TELEMETRY_INDEX_PREFIX
 
@@ -50,7 +50,8 @@ async def run_rule_checks(window_minutes: int = 5):
 
     try:
         index_pattern = f"{TELEMETRY_INDEX_PREFIX}-*"
-        res = await es.search(index=index_pattern, body=query, size=100) # Capping at 100 for safety
+        client = await es_client.get_client()
+        res = await client.search(index=index_pattern, body=query, size=100) # Capping at 100 for safety
 
         for hit in res["hits"]["hits"]:
             log_data = hit["_source"]
