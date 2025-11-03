@@ -55,8 +55,8 @@ The API will be available at `http://127.0.0.1:8000`.
     }
     ```
 
-*   **Check the alerts index in Elasticsearch**:
-    You can query Elasticsearch directly to see if an alert was created:
+*   **Retrieve the created alerts**:
+    You can now use the new API endpoint to see if an alert was created:
     ```bash
-    GET http://localhost:9200/alerts/_search
+    GET http://127.0.0.1:8000/api/v1/alerts
     ```

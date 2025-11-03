@@ -23,3 +23,24 @@ async def create_alert(alert_data: dict) -> str:
     except Exception as e:
         logger.error(f"Error creating alert for ATM {alert_data.get('atm_id')}: {e}")
         raise
+
+async def get_all_alerts(size: int = 100) -> list:
+    """
+    Retrieves all alerts from the alerts index.
+
+    Args:
+        size: The maximum number of alerts to return.
+
+    Returns:
+        A list of alert documents.
+    """
+    try:
+        query = {"query": {"match_all": {}}}
+        res = await es.search(index=ALERTS_INDEX_NAME, body=query, size=size)
+        logger.info(f"Successfully retrieved {len(res['hits']['hits'])} alerts.")
+        return [hit["_source"] for hit in res["hits"]["hits"]]
+    except Exception as e:
+        logger.error(f"Error retrieving alerts: {e}")
+        # In a real app, you might want to differentiate between "index not found" and other errors.
+        # For now, we return an empty list.
+        return []

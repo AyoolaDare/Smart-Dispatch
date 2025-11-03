@@ -1,7 +1,7 @@
 import logging
 from fastapi import FastAPI
 
-from app.api.v1.endpoints import logs
+from app.api.v1.endpoints import logs, alerts
 from app.config import settings
 from app.jobs.scheduler import start_scheduler, stop_scheduler
 from app.services.elasticsearch.es_client import es_client
@@ -44,5 +44,6 @@ async def shutdown_event():
     stop_scheduler()
     await es_client.close()
 
-# Include the API router
+# Include the API routers
 app.include_router(logs.router, prefix="/api/v1", tags=["Log Ingestion"])
+app.include_router(alerts.router, prefix="/api/v1", tags=["Alerts"])
