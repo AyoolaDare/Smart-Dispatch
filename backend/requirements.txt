@@ -4,3 +4,4 @@ elasticsearch[async]
 apscheduler
 python-dotenv
 pydantic
+pydantic-settings
