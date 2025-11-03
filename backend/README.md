@@ -30,12 +30,36 @@ This backend service handles a critical part of the ATM Smart Dispatch System: i
     cp .env.example .env
     ```
 
-7.  **Run the FastAPI application**:
-    ```bash
+7.  **Run the FastAPI application** (choose one):
+
+- From inside the `backend` directory (recommended):
+
+    ```powershell
+    cd backend
     uvicorn app.main:app --reload
     ```
 
+- From the repository root you can point to the module path:
+
+    ```powershell
+    uvicorn backend.app.main:app --reload
+    ```
+
+- Or set `PYTHONPATH` for a single command (PowerShell):
+
+    ```powershell
+    $env:PYTHONPATH = 'backend'; uvicorn app.main:app --reload
+    ```
+
 The API will be available at `http://127.0.0.1:8000`.
+
+Note: This service requires an Elasticsearch instance reachable at `ELASTICSEARCH_HOST` (default: `http://localhost:9200`). If you don't have ES running locally you can start a single-node instance with Docker:
+
+```powershell
+docker run --name es-local -p 9200:9200 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:8.8.1
+```
+
+Or point `ELASTICSEARCH_HOST` in `.env` to a reachable cluster. The app will log and continue running if ES is unreachable, but features that require ES will not function until a connection is available.
 
 ## Testing the System
 
