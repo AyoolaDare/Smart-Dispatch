@@ -1,8 +1,6 @@
 fastapi
 uvicorn
 elasticsearch[async]
-python-dotenv
 apscheduler
+python-dotenv
 pydantic
-httpx
-pydantic-settings

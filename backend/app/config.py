@@ -1,14 +1,15 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
 
 class Settings(BaseSettings):
-    ELASTICSEARCH_HOST: Optional[str] = None
-    ELASTIC_CLOUD_ID: Optional[str] = None
-    ELASTIC_API_KEY: Optional[str] = None
-    APP_ENV: str
-    LOG_LEVEL: str
+    """
+    Application settings loaded from the environment.
+    """
+    ELASTICSEARCH_HOST: str = "http://localhost:9200"
+    APP_ENV: str = "development"
+    LOG_LEVEL: str = "info"
 
     class Config:
         env_file = ".env"
+        env_file_encoding = 'utf-8'
 
 settings = Settings()

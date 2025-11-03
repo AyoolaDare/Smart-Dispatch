@@ -1,44 +1,62 @@
-# ATM Smart Dispatch System
+# ATM Smart Dispatch System - Log Ingestion and Alert Detection
 
-This is the backend for the AI-powered ATM Smart Dispatch System.
+This backend service handles a critical part of the ATM Smart Dispatch System: ingesting telemetry logs from ATMs and detecting anomalies to create alerts.
 
 ## How to Run Locally
 
-### With a Local Elasticsearch Instance
-
 1.  **Ensure Elasticsearch is running** at `http://localhost:9200`.
+
 2.  **Navigate to the backend directory**:
     ```bash
     cd backend
     ```
+
 3.  **Create a virtual environment**:
     ```bash
     python -m venv venv
     ```
+
 4.  **Activate the virtual environment**:
-    -   **macOS/Linux**: `source venv/bin/activate`
-    -   **Windows**: `venv\\Scripts\\activate`
+    *   **macOS/Linux**: `source venv/bin/activate`
+    *   **Windows**: `venv\\Scripts\\activate`
+
 5.  **Install the required packages**:
     ```bash
     pip install -r requirements.txt
     ```
+
 6.  **Create a `.env` file** from the example:
     ```bash
     cp .env.example .env
     ```
-7.  **Ensure `ELASTICSEARCH_HOST` is set** in your `.env` file.
-8.  **Run the FastAPI application**:
-    ```bash
-    uvicorn app.main:app --reload
-    ```
 
-### With Elastic Cloud
-
-1.  **Follow steps 2-6** from the local setup.
-2.  **In your `.env` file, comment out `ELASTICSEARCH_HOST`** and set your `ELASTIC_CLOUD_ID` and `ELASTIC_API_KEY`.
-3.  **Run the FastAPI application**:
+7.  **Run the FastAPI application**:
     ```bash
     uvicorn app.main:app --reload
     ```
 
 The API will be available at `http://127.0.0.1:8000`.
+
+## Testing the System
+
+*   **Ingest a log (with an alert condition)**:
+    ```bash
+    POST http://127.0.0.1:8000/api/v1/logs/ingest
+    Content-Type: application/json
+
+    {
+      "atm_id": "ATM-456",
+      "status": "error",
+      "uptime": 92.1,
+      "cash_level": 30,
+      "error_code": "PRINTER_JAM",
+      "error_message": "Critical paper jam in receipt printer",
+      "location": {"lat": 40.7128, "lon": -74.0060}
+    }
+    ```
+
+*   **Check the alerts index in Elasticsearch**:
+    You can query Elasticsearch directly to see if an alert was created:
+    ```bash
+    GET http://localhost:9200/alerts/_search
+    ```
